@@ -1,0 +1,11 @@
+video_resolution: 640x359
+frames: 1,
+# frame interval [1, num_frames] separated by comma. If the end is not specified, it reads
+# until the last frame
+
+initial_bbs:
+317,157,31,62
+400,172,44,60
+207,89,37,42
+304,101,35,40
+256,138,133,58
