@@ -3,11 +3,6 @@ Structural Graph Tracker
 
 This code implements a method for tracking multiple object in videos using
 structural information encoded in graphs and particle filters.
-This code implements the algorithm described in the CVIU paper:
-
-H. Morimitsu, I. Bloch, R. M. Cesar-Jr. Exploring structure for long-term
-tracking of multiple objects in sports videos. In Computer Vision and Image
-Understanding. 2016 (to appear)
 
 Copyright (c) 2016, Henrique Morimitsu,
 University of Sao Paulo, Sao Paulo, Brazil
@@ -19,6 +14,18 @@ License
 
 This code is released under the BSD 3-clause license (see license.txt)
 
+Citing Structural Graph Tracker
+-------------------------------
+
+If you consider this code useful for your research, please consider citing:
+
+    @article{morimitsu2016exploring,
+        author = {Henrique Morimitsu and Isabelle Bloch and Roberto M. Cesar-Jr.},
+        title = {Exploring Structure for Long-Term Tracking of Multiple Objects in Sports Videos},
+        journal = {Computer Vision and Image Understanding},
+        year = {2016},
+        doi = {http://dx.doi.org/10.1016/j.cviu.2016.12.003},
+    }
 
 Requirements
 ------------
