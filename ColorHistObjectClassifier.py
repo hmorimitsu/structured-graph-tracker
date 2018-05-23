@@ -53,8 +53,8 @@ class ColorHistObjectClassifier(ObjectClassifier):
         documentation about the calcHist function.
         """
         self._bb = bb
-        self._obj_img = hsv_img[bb.top():bb.bottom(),
-                                bb.left():bb.right()]
+        self._obj_img = hsv_img[int(bb.top()):int(bb.bottom()),
+                                int(bb.left()):int(bb.right())]
         self._color_hist_params = [hist_channels, hist_mask, hist_num_bins,
                                    hist_intervals]
         self._color_hist = self.compute_object_histogram(
@@ -70,8 +70,8 @@ class ColorHistObjectClassifier(ObjectClassifier):
         """
         obj_hist = np.zeros((num_bins[0] * num_bins[1] + num_bins[2]),
                             np.float32)
-        obj_image = img[objectBB.top():objectBB.bottom(),
-                        objectBB.left():objectBB.right()]
+        obj_image = img[int(objectBB.top()):int(objectBB.bottom()),
+                        int(objectBB.left()):int(objectBB.right())]
 
         # Creates a separated image for each channel
         splitted_img = cv2.split(obj_image)
