@@ -59,10 +59,14 @@ correct files:
 
 You can also change the values directly on the terminal by specifying parameter
 flags. In order to know the modifiable parameters, run the command:
-> python Main.py -h
+```bash
+python Main.py -h
+```
 
 If the configuration is correct, then the tracking can be starter by running:
-> python Main.py
+```bash
+python Main.py
+```
 
 You can stop the execution at any time by pressing the ESC key. The tracking
 results will be saved on the folder specified in the output_annotation_dir
@@ -78,12 +82,16 @@ in the comments section of file TrackingEvaluator.py.
 In order to evaluate the results for the tt sample video, you should run the
 command:
 
-> python TrackingEvaluator.py outputAnnotations/ttd2_sample/ sequences/gt_ann/ttd2/ 2 2
+```bash
+python TrackingEvaluator.py outputAnnotations/ttd2_sample/ sequences/gt_ann/ttd2/ 2 2
+```
 
 Again, you can obtain more information about the parameters by simply calling
 the code without parameters:
 
-> python TrackingEvaluator.py
+```bash
+python TrackingEvaluator.py
+```
 
 You can also hide/show the final header of the printed results and choose to
 print or not the individual results for each frame by changing the flag
@@ -94,14 +102,20 @@ It is also possible to visualize the tracking results using the
 ResultsVisualizator.py code. In order to visualize the ttd2_sample
 results, you can run the following command:
 
-> python ResultsVisualizator.py sequences/ttd2.mp4 0 outputAnnotations/ttd2_sample/ Sample
+```bash
+python ResultsVisualizator.py sequences/ttd2.mp4 0 outputAnnotations/ttd2_sample/ Sample
+```
 
 If you want to visualize multiple results simultaneously, simply add more
 parameters, like:
 
-> python ResultsVisualizator.py sequences/ttd2.mp4 0 outputAnnotations/ttd2_sample/ Sample sequences/gt_ann/ttd2/ GT
+```bash
+python ResultsVisualizator.py sequences/ttd2.mp4 0 outputAnnotations/ttd2_sample/ Sample sequences/gt_ann/ttd2/ GT
+```
 
 As always, you can obtain more information about the parameters by simply calling
 the code without parameters:
 
-> python ResultsVisualizator.py
+```bash
+python ResultsVisualizator.py
+```
