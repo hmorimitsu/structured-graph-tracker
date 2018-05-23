@@ -92,7 +92,7 @@ class ColorHistObjectClassifier(ObjectClassifier):
 
         return obj_hist
 
-    def particle_weight(self, state, hsv_img, mask=None):
+    def particle_weight(self, particles, hsv_img, mask=None):
         """ Computes the new weight of a particle. This function computes the
         likelihood P(z|x), where z is the observation (color histogram) and x
         the state. This implementations corresponds to the function proposed in:
@@ -100,40 +100,41 @@ class ColorHistObjectClassifier(ObjectClassifier):
         Fragments based tracking with adaptive cue integration. Computer Vision
         and Image Understanding, 116 (7):827-841.
         """
-        particleBB = self._bb.centered_on(state[0], state[1])
-        particle_hist = self.compute_object_histogram(
-            hsv_img, particleBB, self._color_hist_params[0], mask,
-            self._color_hist_params[2], self._color_hist_params[3])
-#         print('bb', particleBB)
-#         print(particle_hist)
-#         print(self._color_hist)
-
-        if mask is not None:
-            model_hist = self.compute_object_histogram(
+        all_weights = np.empty((particles.shape[0], 1), np.float64)
+        num_bins = self._color_hist_params[2]
+        all_particle_hists = np.empty(
+            (particles.shape[0],num_bins[0]*num_bins[1]+num_bins[2]),
+            np.float64)
+        for i, state in enumerate(particles):
+            particleBB = self._bb.centered_on(state[0], state[1])
+            particle_hist = self.compute_object_histogram(
                 hsv_img, particleBB, self._color_hist_params[0], mask,
                 self._color_hist_params[2], self._color_hist_params[3])
-            if Utils.is_cv2():
-                dist = cv2.compareHist(model_hist, particle_hist,
-                                       cv2.cv.CV_COMP_BHATTACHARYYA)
-            elif Utils.is_cv3():
-                dist = cv2.compareHist(model_hist, particle_hist,
-                                       cv2.HISTCMP_HELLINGER)
-        else:
-            if Utils.is_cv2():
-                dist = cv2.compareHist(self._color_hist, particle_hist,
-                                       cv2.cv.CV_COMP_BHATTACHARYYA)
-#                 print('d', dist)
-            elif Utils.is_cv3():
-                dist = cv2.compareHist(self._color_hist, particle_hist,
-                                       cv2.HISTCMP_HELLINGER)
+            all_particle_hists[i] = particle_hist
+            
+        norm_color_hist = self._color_hist / np.sum(self._color_hist)
+        norm_color_hist = norm_color_hist[np.newaxis]
+        sum_hist = np.sum(all_particle_hists, axis=1, keepdims=True)
+        sum_hist[sum_hist == 0] = 1.0
+        norm_particle_hist = all_particle_hists / sum_hist
+        dist = (1.0/np.sqrt(2)) * \
+               np.sqrt(np.sum(
+                   np.power(np.sqrt(norm_color_hist) - \
+                            np.sqrt(norm_particle_hist), 2), axis=1))
 
         sigma = 0.1
-        weight = 0.0
-        if 0 <= state[0] < hsv_img.shape[1] and 0 <= state[1] < hsv_img.shape[0]:
-            weight = math.exp(-(math.pow(dist, 2)) / (2 * math.pow(sigma, 2)))
-#         print('w', weight)
+        all_weights = np.exp(-(np.power(dist, 2)) / (2 * np.power(sigma, 2)))
 
-        return weight
+        positive_x = particles[:, 0] >= 0
+        small_x = particles[:, 0] < hsv_img.shape[1]
+        positive_y = particles[:, 1] >= 0
+        small_y = particles[:, 1] < hsv_img.shape[0]
+        valid_mask = positive_x * small_x * positive_y * small_y
+        
+        all_weights = all_weights * valid_mask
+        all_weights = all_weights[:, np.newaxis]
+        
+        return all_weights
 
     def score_object(self, hsv_img, bb, mask=None):
         """ Compute the score of an object represented by bb, according to

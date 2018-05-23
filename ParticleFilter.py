@@ -170,12 +170,24 @@ class ParticleFilter(object):
         old_particles = self._particles.copy()
         old_weights = self._weights.copy()
         old_normalized_weights = self._normalized_weights.copy()
-        for i in range(self._num_particles):
-            x = np.random.uniform(0.0, self._weight_sum)
-            j = np.searchsorted(self._cumulative_weights, x)
-            self._particles[i] = old_particles[j].copy()
-            self._weights[i] = old_weights[j].copy()
-            self._normalized_weights[i] = old_normalized_weights[j].copy()
+
+        j = np.random.choice(self._num_particles, self._num_particles,
+                             p=self._normalized_weights[:, 0])
+        self._particles = old_particles[j]
+        self._weights = old_weights[j]
+        self._normalized_weights = old_normalized_weights[j]
+        # print(j)
+        # sds
+
+        # print(x.shape, self._cumulative_weights.shape)
+        # sds
+        
+        # for i in range(self._num_particles):
+        #     x = np.random.uniform(0.0, self._weight_sum)
+        #     j = np.searchsorted(self._cumulative_weights, x)
+        #     self._particles[i] = old_particles[j].copy()
+        #     self._weights[i] = old_weights[j].copy()
+        #     self._normalized_weights[i] = old_normalized_weights[j].copy()
 
     def update(self, weighting_function, *args):
         """ Updates all the particles by resampling, propagating and updating
@@ -193,16 +205,16 @@ class ParticleFilter(object):
         computes the new weights of the particles *args are the parameters,
         besides the particle state, that weighting_function may require
         """
-        for i in range(len(self._particles)):
-            self._weights[i] = weighting_function(self._particles[i], *args)
+        self._weights = weighting_function(self._particles, *args)
 
         self._weight_sum = np.sum(self._weights)
         self._cumulative_weights = np.cumsum(self._weights)
 
         if self._weight_sum > 0:
-            for i in range(len(self._particles)):
-                self._normalized_weights[i] = \
-                    self._weights[i] / self._weight_sum
+            self._normalized_weights = self._weights / self._weight_sum
+            # for i in range(len(self._particles)):
+            #     self._normalized_weights[i] = \
+            #         self._weights[i] / self._weight_sum
 
     @property
     def normalized_weights(self):
